@@ -6,12 +6,48 @@ import java.util.Scanner;
 
 public class Login {
     public static void main(String[] args) {
-        HashMap<String, String> userDatabase = loadUserDatabase("../data/user_hashpwd.csv");
+    // Obtenez le répertoire de travail actuel
+        String currentDir = System.getProperty("user.dir");
+        String filePath;
+
+        // Déterminez le chemin du fichier en fonction du répertoire actuel
+        if (currentDir.equals("/home/onyxia/work")) {
+            filePath = "ENSAI-2A-Java-TP/tp1/data/user_hashpwd.csv";
+        } else {
+            filePath = "../data/user_hashpwd.csv";
+        }
+
+        HashMap<String, String> userDatabase = loadUserDatabase(filePath);
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
+            System.out.print("Enter username: ");
+            String username = scanner.nextLine();
 
-            // Code here
+            if (userDatabase.containsKey(username)) {
+                int attempts = 3;
+                while (attempts > 0) {
+                    System.out.print("Enter password: ");
+                    String password = scanner.nextLine();
+                    String hashedPassword = Password.hashPassword(password);
+
+                    if (userDatabase.get(username).equals(hashedPassword)) {
+                        System.out.println("Login successful!");
+                        scanner.close();
+                        return;
+                    } else {
+                        attempts--;
+                        if (attempts > 0) {
+                            System.out.println("Incorrect password. " + attempts + " attempts remaining.");
+                        } else {
+                            System.out.println("Maximum attempts reached. Restarting username input.");
+                            break;
+                        }
+                    }
+                }
+            } else {
+                System.out.println("Username not found. Please try again.");
+            }
         }
     }
 
