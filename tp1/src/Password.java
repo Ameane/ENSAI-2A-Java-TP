@@ -61,8 +61,31 @@ public class Password {
      * @return true if the password is strong, false otherwise
      */
     public static boolean isStrongPassword(String password) {
+        // Check length
+        if (password.length() < 12) {
+            return false;
+        }
 
-        // Code here
+        // Flags for different character types
+        boolean HasUppercase = false;
+        boolean HasLowercase = false;
+        boolean HasDigit = false;
+        boolean HasWhitespace = false;
+
+        // Iterate over each character in the password
+        for (char c : password.toCharArray()) {
+            if (Character.isUpperCase(c)) 
+                HasUppercase = true;
+            if (Character.isLowerCase(c)) 
+                HasLowercase = true;
+            if (Character.isDigit(c)) 
+                HasDigit = true;
+            if (Character.isWhitespace(c)) 
+                HasWhitespace = true;
+        }
+
+        if (HasDigit && HasLowercase && HasUppercase && !HasWhitespace)
+            return true;
 
         return false;
     }
