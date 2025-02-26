@@ -1,6 +1,8 @@
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,13 +41,15 @@ public class Password {
      * @return the 6-digit number that matches, or null if no match is found
      */
     public static String bruteForce6Digit(String targetHash) {
-        for(int i=0; i < 1000000 ; i++){
+        for (int i = 0; i < 1000000; i++) {
             String hashed = String.format("%06d", i);
             if (hashPassword(hashed).equals(targetHash)) {
-                return (hashed); }
-        }      
+                return (hashed);
+            }
+        }
         return null;
     }
+
     /**
      * Checks if the given password is strong according to the following criteria:
      * 
@@ -74,13 +78,13 @@ public class Password {
 
         // Iterate over each character in the password
         for (char c : password.toCharArray()) {
-            if (Character.isUpperCase(c)) 
+            if (Character.isUpperCase(c))
                 HasUppercase = true;
-            if (Character.isLowerCase(c)) 
+            if (Character.isLowerCase(c))
                 HasLowercase = true;
-            if (Character.isDigit(c)) 
+            if (Character.isDigit(c))
                 HasDigit = true;
-            if (Character.isWhitespace(c)) 
+            if (Character.isWhitespace(c))
                 HasWhitespace = true;
         }
 
@@ -99,10 +103,11 @@ public class Password {
      *         true if the password is strong, false otherwise
      */
     public static HashMap<String, Boolean> checkPasswordsList(ArrayList<String> passwords) {
-
-        // Code here
-
-        return null;
+        HashMap<String, Boolean> result = new HashMap<>();
+        for (String motDePasse : passwords) {
+            result.put(motDePasse, isStrongPassword(motDePasse));
+        }
+        return result;
     }
 
     /**
@@ -118,10 +123,37 @@ public class Password {
      * @return A randomly generated password that meets the security criteria.
      */
     public static String generatePassword(int nbCar) {
+        if (nbCar < 4) {
+            throw new IllegalArgumentException("Password length must be at least 4 characters.");
+        }
 
-        // Code here
+        SecureRandom random = new SecureRandom();
 
-        return null;
+        String upperCaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String lowerCaseLetters = "abcdefghijklmnopqrstuvwxyz";
+        String digits = "0123456789";
+        String specialCharacters = "!@#$%^&*()-_=+[]{}|;:,.<>?";
+
+        ArrayList<Character> passwordChars = new ArrayList<>();
+
+        passwordChars.add(upperCaseLetters.charAt(random.nextInt(upperCaseLetters.length())));
+        passwordChars.add(lowerCaseLetters.charAt(random.nextInt(lowerCaseLetters.length())));
+        passwordChars.add(digits.charAt(random.nextInt(digits.length())));
+        passwordChars.add(specialCharacters.charAt(random.nextInt(specialCharacters.length())));
+
+        String allCharacters = upperCaseLetters + lowerCaseLetters + digits + specialCharacters;
+        for (int i = 4; i < nbCar; i++) {
+            passwordChars.add(allCharacters.charAt(random.nextInt(allCharacters.length())));
+        }
+
+        Collections.shuffle(passwordChars);
+
+        StringBuilder password = new StringBuilder();
+        for (char ch : passwordChars) {
+            password.append(ch);
+        }
+
+        return password.toString();
     }
 
     public static void main(String[] args) {
